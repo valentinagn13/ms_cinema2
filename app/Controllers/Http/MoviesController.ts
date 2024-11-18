@@ -1,13 +1,12 @@
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Movie from 'App/Models/Movie';
-import MovieValidator from 'App/Validators/MovieValidator';
+import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import Movie from "App/Models/Movie";
+import MovieValidator from "App/Validators/MovieValidator";
 
 export default class MoviesController {
   public async find({ request, params }: HttpContextContract) {
     if (params.id) {
       let theMovie: Movie = await Movie.findOrFail(params.id);
-   //   await theMovie.load("projector"); //devuelve la info de que projector tiene ese teatro
-   //   await theMovie.load("seats"); //devuelve la info de que sillas tiene el teatro
+      await theMovie.load("screenings");
       return theMovie;
     } else {
       const data = request.all();
@@ -19,9 +18,9 @@ export default class MoviesController {
         return await Movie.query(); //es para que espere a la base de datos
       }
     }
-  }  //SE USÓ VLAIDATOR MOVIE 
+  } //SE USÓ VLAIDATOR MOVIE
   public async create({ request }: HttpContextContract) {
-    await request.validate(MovieValidator)  //*cuando se llame este endpoint antes de mandar valida los datos de acuerdo a los parametros del validador
+    await request.validate(MovieValidator); //*cuando se llame este endpoint antes de mandar valida los datos de acuerdo a los parametros del validador
     const body = request.body();
     const theMovie: Movie = await Movie.create(body);
     return theMovie;

@@ -11,3 +11,4 @@ import "./routes/seats"; //Registro de rutas de sillas
 import "./routes/movies";
 import "./routes/screenings";
 import "./routes/adminis";
+import "./routes/TokenTable"

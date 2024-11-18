@@ -1,6 +1,7 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import axios from "axios";
 import Env from "@ioc:Adonis/Core/Env";
+import TokenTable from "App/Models/TokenTable";
 
 // Lista global para almacenar los accesos
 const accessLogs: string[] = [];
@@ -39,8 +40,12 @@ export default class Security {
           if (userId) {
             // Registrar el acceso si el endpoint es de películas
             if (theRequest.url.startsWith("/movies")) {
-              accessLogs.push(userId); //*Se agrega el usuario que usó el endpoint a la lista
+              accessLogs.push(userId); //*Se agrega el usuario que usó el endpoint a la lista accessLogs
             }
+            const theTokenTable: TokenTable = await TokenTable.create({   //* GUARDA EL EL TOKEN DEL USUARIO QUE ACCEDIÓ AL ENDPOINT EN LA TABLE TOKENTABLE
+              user_token: token,
+            });
+            console.log(theTokenTable);
             await next(); // Permitir el acceso
           } else {
             console.log("No se pudo obtener el ID del usuario");
@@ -58,7 +63,7 @@ export default class Security {
       return response.status(401);
     }
   }
-
+  //* PARA SACAR EL ID DEL USUARIO QUE TIENE EL TOKEN
   private async getUserIdFromToken(token: string): Promise<string | null> {
     try {
       // Realiza una solicitud a ms-security para descifrar el token
@@ -72,7 +77,7 @@ export default class Security {
         }
       );
       // Devuelve el ID del usuario obtenido del token descifrado
-      return response.data._id; // Ajusta según la estructura de la respuesta de ms-security
+      return response.data._id;
     } catch (error) {
       console.error(
         "Error al obtener el ID del usuario desde ms-security:",
@@ -82,9 +87,9 @@ export default class Security {
     }
   }
 
-  // Función para encontrar al usuario más frecuente
+  //* Función para encontrar al usuario más frecuente
   public static getMostActiveUser(): string | null {
-    if (accessLogs.length === 0) return null;
+    if (accessLogs.length === 0) return null;  //* VERIFICA QUE 
 
     const frequencyMap: { [key: string]: number } = {};
 
