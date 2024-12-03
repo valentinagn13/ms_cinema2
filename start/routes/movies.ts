@@ -5,4 +5,6 @@ Route.group(() => {
   Route.post("/movies", "MoviesController.create"); //crearlos
   Route.put("/movies/:id", "MoviesController.update"); //actualizar recibe id
   Route.delete("/movies/:id", "MoviesController.delete"); //borrar, recibe id
-}).middleware(["security"]);  //COLOCAR EL POLICIA, ACTIVARLO PARA MOVIES 
+  Route.post("/notificar", "MoviesController.notificar");
+});
+// .middleware(["security"]); //COLOCAR EL POLICIA, ACTIVARLO PARA MOVIES
